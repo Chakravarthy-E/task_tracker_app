@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-hot-toast";
+import { ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const UserLogin = () => {
@@ -9,29 +9,34 @@ const UserLogin = () => {
     email: "",
     password: "",
   });
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const loginUser = async (e) => {
     e.preventDefault();
     const { email, password } = data;
     try {
-      const { data } = await axios.post("http://localhost:5000/login", {
-        email,
-        password,
-      });
-      if(data.error){
-        toast.error(data.error)
+      const response = await axios.post(
+        "http://localhost:5000/login",
+
+        {
+          email,
+          password,
+        },
+        { withCredentials: true }
+      );
+      if (response.data.autherization) {
+        window.localStorage.setItem(
+          "authe_user",
+          JSON.stringify(response.data.autherization)
+        );
       }
-      else{
-        setData({})
-        toast.success("Login successfully")
-        navigate("/dashboard")
-      }
+      navigate("/dashboard");
     } catch (error) {}
   };
 
   return (
     <div className="bg-gradient-to-r from-blue-500 to-purple-500 min-h-screen flex items-center justify-center">
+      <ToastContainer position="top-center" />
       <form
         className="bg-white p-8 rounded shadow-lg w-96"
         onSubmit={loginUser}

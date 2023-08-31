@@ -15,17 +15,20 @@ const UserRegister = () => {
     e.preventDefault();
     const { username, email, password } = data;
     try {
-      const { data } = await axios.post("http://localhost:5000/register", {
-        username,
-        email,
-        password,
-      });
-      if (data.error) {
-        toast.error(data.error);
-      } else {
-        setData({});
-        toast.success("Register successful");
-        navigate("/login");
+      const  data  = await axios.post(
+        "http://localhost:5000/register",
+        {
+          username,
+          email,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      if(data.status === 201){
+        toast.success("Registered Successfully")
+        navigate("/login")
       }
     } catch (error) {}
   };
