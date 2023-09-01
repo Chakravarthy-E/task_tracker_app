@@ -1,111 +1,78 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-const Tasks = ({
-  tasks,
-  onEdit,
-  onDelete,
-  editIndex,
-  setEditIndex,
-  editedTask,
-  setEditedTask,
-}) => {
+const Tasks = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/tasks");
+        setData(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleDelete = async (taskId) => {
+    try {
+      await axios.delete(`http://localhost:5000/tasks/${taskId}`);
+      // Refresh the task list after deletion
+    } catch (err) {
+      console.error("Error deleting task:", err);
+    }
+  };
+  const handleUpdate = () => {};
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
   return (
-    <div>
-      <h2 className="text-2xl font-semibold mb-4">Tasks</h2>
-      <ul>
-        {tasks && tasks.length > 0 ? (
-          tasks.map((task, index) => (
-            <li key={index} className="mb-4">
-              <div className="bg-white rounded-lg shadow-md p-4">
-                {editIndex === index ? (
-                  <div>
-                    <input
-                      type="text"
-                      value={editedTask.title}
-                      onChange={(e) =>
-                        setEditedTask({
-                          ...editedTask,
-                          title: e.target.value,
-                        })
-                      }
-                      className="border rounded-md p-2 mb-2"
-                    />
-                    <textarea
-                      value={editedTask.description}
-                      onChange={(e) =>
-                        setEditedTask({
-                          ...editedTask,
-                          description: e.target.value,
-                        })
-                      }
-                      className="border rounded-md p-2 mb-2"
-                    />
-                    <input
-                      type="date"
-                      value={editedTask.dueDate}
-                      onChange={(e) =>
-                        setEditedTask({
-                          ...editedTask,
-                          dueDate: e.target.value,
-                        })
-                      }
-                      className="border rounded-md p-2 mb-2"
-                    />
-                    <select
-                      value={editedTask.priority}
-                      onChange={(e) =>
-                        setEditedTask({
-                          ...editedTask,
-                          priority: e.target.value,
-                        })
-                      }
-                      className="border rounded-md p-2 mb-2"
-                    >
-                      <option value="Low">Low</option>
-                      <option value="Medium">Medium</option>
-                      <option value="High">High</option>
-                    </select>
-                    <button
-                      onClick={() => onEdit(index, editedTask)}
-                      className="bg-green-500 text-white px-4 py-2 rounded-md ml-2"
-                    >
-                      Save
-                    </button>
-                  </div>
-                ) : (
-                  <div>
-                    <h3 className="text-lg font-semibold">{task.title}</h3>
-                    <p className="text-gray-600 text-sm">{task.description}</p>
-                    <div className="flex items-center mt-2">
-                      <div className="mr-4">
-                        <strong className="font-semibold">Due Date:</strong>{' '}
-                        {task.dueDate}
-                      </div>
-                      <div>
-                        <strong className="font-semibold">Priority:</strong>{' '}
-                        {task.priority}
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setEditIndex(index)}
-                      className="bg-blue-500 text-white px-2 py-1 rounded-md mt-2 mr-2"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => onDelete(index)}
-                      className="bg-red-500 text-white px-2 py-1 rounded-md mt-2"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                )}
-              </div>
-            </li>
-          ))
-        ) : (
-          <div className="text-gray-500">No tasks available</div>
-        )}
+    <div className="">
+      <h1 className="text-3xl font-bold mb-4">Tasks</h1>
+      <ul className=" gap-2 flex-wrap">
+        {data.map((task) => (
+          <li key={task._id} className="bg-gray-100 border rounded-md p-4 mb-4">
+            <h3 className="text-xl font-bold">
+              Title: <span className="font-normal">{task.title}</span>
+            </h3>
+            <p className="text-lg">
+              Description:{" "}
+              <span className="font-normal">{task.description}</span>
+            </p>
+            <p className="text-lg">
+              Due Date: <span className="font-normal">{task.dueDate}</span>
+            </p>
+            <p className="text-lg">
+              Priority: <span className="font-normal">{task.priority}</span>
+            </p>
+            <div className="flex justify-between mt-2">
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                onClick={() => handleUpdate(task._id)}
+              >
+                Update
+              </button>
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                onClick={() => handleDelete(task._id)}
+              >
+                Delete
+              </button>
+            </div>
+          </li>
+        ))}
       </ul>
     </div>
   );

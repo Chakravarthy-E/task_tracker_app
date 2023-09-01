@@ -1,59 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Tasks from './Tasks';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const TaskManager = () => {
   const [showForm, setShowForm] = useState(false);
   const [task, setTask] = useState({
-    title: '',
-    description: '',
-    dueDate: '',
-    priority: 'Low',
-  });
-  const [tasks, setTasks] = useState([]);
-  const [editIndex, setEditIndex] = useState(-1);
-  const [editedTask, setEditedTask] = useState({
-    title: '',
-    description: '',
-    dueDate: '',
-    priority: 'Low',
+    title: "",
+    description: "",
+    dueDate: "",
+    priority: "Low",
   });
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await axios.get('https://api.example.com/tasks');
-        setTasks(response.data);
-      } catch (error) {
-        console.error('Error fetching tasks:', error);
-      }
-    };
-
-    fetchTasks();
-  }, []);
-
-  const handleAddTask = () => {
-    if (task.title.trim() !== '') {
-      setTasks([...tasks, task]);
-      setTask({
-        title: '',
-        description: '',
-        dueDate: '',
-        priority: 'Low',
-      });
-    }
-  };
-
-  const handleEditTask = (index, updatedTask) => {
-    const updatedTasks = [...tasks];
-    updatedTasks[index] = updatedTask;
-    setTasks(updatedTasks);
-    setEditIndex(-1);
-  };
-
-  const handleDeleteTask = (index) => {
-    const updatedTasks = tasks.filter((_, i) => i !== index);
-    setTasks(updatedTasks);
+  const handleAddTask = async () => {
+    const { title, description, dueDate, priority } = task;
+    const data = await axios.post("http://localhost:5000/tasks", {
+      title,
+      description,
+      dueDate,
+      priority,
+    });
   };
 
   return (
@@ -63,7 +27,7 @@ const TaskManager = () => {
         onClick={() => setShowForm(!showForm)}
         className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4"
       >
-        {showForm ? 'Hide Form' : 'Add Task'}
+        {showForm ? "Hide Form" : "Add Task"}
       </button>
 
       {showForm && (
@@ -105,16 +69,6 @@ const TaskManager = () => {
           </button>
         </div>
       )}
-
-      <Tasks
-        tasks={tasks}
-        onEdit={handleEditTask}
-        onDelete={handleDeleteTask}
-        editIndex={editIndex}
-        setEditIndex={setEditIndex}
-        editedTask={editedTask}
-        setEditedTask={setEditedTask}
-      />
     </div>
   );
 };
