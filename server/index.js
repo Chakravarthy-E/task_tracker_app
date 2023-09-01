@@ -33,6 +33,7 @@ app.use(cookieParser());
 
 //routes
 app.use("/", require("./routes/authRoutes"));
+app.use("/",require("./routes/taskRoutes.js"))
 
 app.listen(port, () => {
   console.log(`server running on ${port}`);

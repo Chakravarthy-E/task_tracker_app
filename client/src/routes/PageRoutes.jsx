@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "../components/Home";
+import Home from "../pages/Home.jsx";
 import { UserLogin, UserRegister } from "../auth/index.js";
-import Dashboard from "../components/Dashboard";
+import Dashboard from "../pages/Dashboard";
 
 const PageRoutes = () => {
   return (

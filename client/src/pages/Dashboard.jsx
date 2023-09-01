@@ -1,7 +1,8 @@
 import React from "react";
-import Navbar from "./Navbar";
-import AddTask from "./AddTask";
-import Tasks from "./Tasks";
+import Navbar from "../components/Navbar";
+import AddTask from "../tasks/AddTask"
+import Tasks from "../tasks/Tasks";
+
 
 const Dashboard = () => {
   return (
