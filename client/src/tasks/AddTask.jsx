@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 
-const TaskManager = () => {
+const AddTask = () => {
   const [showForm, setShowForm] = useState(false);
+  const [data, setData] = useState([]);
   const [task, setTask] = useState({
     title: "",
     description: "",
@@ -12,12 +13,22 @@ const TaskManager = () => {
 
   const handleAddTask = async () => {
     const { title, description, dueDate, priority } = task;
-    const data = await axios.post("http://localhost:5000/tasks", {
-      title,
-      description,
-      dueDate,
-      priority,
-    });
+
+    try {
+      // Make the POST request to add a task
+      await axios.post("http://localhost:5000/tasks", {
+        title,
+        description,
+        dueDate,
+        priority,
+      });
+
+      // Fetch the updated data from the server
+      const response = await axios.get("http://localhost:5000/tasks");
+      setData(response.data); // Update the state with the new data
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
   };
 
   return (
@@ -73,4 +84,4 @@ const TaskManager = () => {
   );
 };
 
-export default TaskManager;
+export default AddTask;

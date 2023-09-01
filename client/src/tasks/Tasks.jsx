@@ -29,7 +29,13 @@ const Tasks = () => {
       console.error("Error deleting task:", err);
     }
   };
-  const handleUpdate = () => {};
+
+  // Function to format the ISO date to a human-readable format
+  const formatDueDate = (isoDate) => {
+    const date = new Date(isoDate);
+    return date.toLocaleDateString(); // Format according to user's locale
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -39,37 +45,18 @@ const Tasks = () => {
   }
 
   return (
-    <div className="">
-      <h1 className="text-3xl font-bold mb-4">Tasks</h1>
-      <ul className=" gap-2 flex-wrap">
+    <div className=" font-serif">
+      <h1 className="text-3xl font-semibold mb-4">Tasks</h1>
+      <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {data.map((task) => (
-          <li key={task._id} className="bg-gray-100 border rounded-md p-4 mb-4">
-            <h3 className="text-xl font-bold">
-              Title: <span className="font-normal">{task.title}</span>
-            </h3>
-            <p className="text-lg">
-              Description:{" "}
-              <span className="font-normal">{task.description}</span>
-            </p>
-            <p className="text-lg">
-              Due Date: <span className="font-normal">{task.dueDate}</span>
-            </p>
-            <p className="text-lg">
-              Priority: <span className="font-normal">{task.priority}</span>
-            </p>
-            <div className="flex justify-between mt-2">
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                onClick={() => handleUpdate(task._id)}
-              >
-                Update
-              </button>
-              <button
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                onClick={() => handleDelete(task._id)}
-              >
-                Delete
-              </button>
+          <li key={task._id} className="bg-white shadow-md p-4 rounded-lg">
+            <h3 className="text-xl font-semibold mb-2">Title: <span className="font-normal">{task.title}</span></h3>
+            <p className="text-sm mb-2">Description: <span className="font-normal">{task.description}</span></p>
+            <p className="text-sm mb-2">Due Date: <span className="font-normal">{formatDueDate(task.dueDate)}</span></p>
+            <p className="text-sm mb-2">Priority: <span className="font-normal">{task.priority}</span></p>
+            <div className="flex justify-end">
+              <button className="bg-blue-500 text-white px-2 py-1 rounded-md mr-2 hover:bg-blue-600">Update</button>
+              <button className="bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600" onClick={() => handleDelete(task._id)}>Delete</button>
             </div>
           </li>
         ))}
